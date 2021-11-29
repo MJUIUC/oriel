@@ -1,0 +1,24 @@
+{
+  "name": "oriel_project",
+  "version": "1.0.0",
+  "description": "Server which hosts assets from a users crypto wallet. Applies necessary conversion steps for them to be displayed in advanced wearables, or crypto wearables.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch . index.js",
+    "start": "node index.js"
+  },
+  "author": "Marcus Jefferson",
+  "license": "all rights reserved",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.13",
+    "morgan": "^1.10.0",
+    "sharp": "^0.29.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
