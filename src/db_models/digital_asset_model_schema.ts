@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 /**
@@ -22,4 +22,4 @@ const DigitalAssetModel = mongoose.model(
   }, { timestamps: true })
 );
 
-module.exports = DigitalAssetModel;
+export default DigitalAssetModel;

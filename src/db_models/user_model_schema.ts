@@ -1,18 +1,18 @@
-const mongoose = require("mongoose");
+import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const UserModel = mongoose.model(
     "UserModel",
     new Schema({
-      osm_asset_id: {
-        type: Number,
+      email_address: {
+        type: String,
         default: null,
       },
-      asset_owner: {
-        type: Object,
+      device_configurations: {
+        type: Array,
         default: null,
       }
     }, { timestamps: true })
 );
 
-module.exports = UserModel;
+export default UserModel;

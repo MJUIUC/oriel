@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+        "allowJs": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "removeComments": true,
+        "preserveConstEnums": true,
+    },
+    "include": [
+        "./index.ts",
+        "./src"
+    ]
+}

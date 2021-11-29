@@ -1,6 +1,12 @@
-const axios = require("axios").default;
+import axios from "axios"; 
 
-class OpenSeaClient {
+/**
+ * Open Sea Client
+ * ---------------
+ * Connects to the Open Sea Marketplace API as a client to retriev
+ * assets associated with a specific wallet address.
+*/
+export default class OpenSeaClient {
 
     /**
      * Get Owned Assets
@@ -14,15 +20,13 @@ class OpenSeaClient {
      */
     async getOwnedAssets(wallet_address, offset = 0) {
         try {
-            const rpcResult = await axios.get(`https://api.opensea.io/api/v1/assets?owner=${wallet_address}&order_direction=desc&offset=${offset}&limit=20`);
-            const { assets } = rpcResult.data;
+            const rpcResult: any = await axios.get(`https://api.opensea.io/api/v1/assets?owner=${wallet_address}&order_direction=desc&offset=${offset}&limit=20`);
+            let { assets } = rpcResult.data;
             const count = assets.length;
             return { wallet_address, asset_count: count, assets };
         } catch (e) {
-            return e;
             console.log(e);
+            return e;
         }
     }
 }
-
-module.exports = { OpenSeaClient };

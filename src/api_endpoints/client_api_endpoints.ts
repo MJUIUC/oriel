@@ -1,9 +1,8 @@
-const router = require('express').Router();
-const path = require("path");
+import OpenSeaClient from "../rpc_clients/open_sea_client" 
+import { Router } from "express";
+const router = Router();
+
 const devWalletAddress = process.env.DEVEL_WALLET_ADDRESS;
-
-
-const OpenSeaClient = require(path.join(__dirname, '/../', 'rpc_clients', 'open_sea_client')).OpenSeaClient;
 const openSeaClient = new OpenSeaClient();
 
 router.get("/assets", async (req, res, next) => {

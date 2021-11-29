@@ -1,9 +1,10 @@
-const express = require("express");
-const morgan = require("morgan");
-const fs = require("fs");
+import * as express from "express";
+import * as morgan from "morgan";
+import * as dotenv from "dotenv";
+import * as fs from "fs";
+import * as path from "path";
+
 const app = express();
-const path = require("path");
-const dotenv = require("dotenv");
 
 dotenv.config();
 
@@ -15,12 +16,14 @@ app.use(
   })
 );
 
-app.use("/api", require(path.join(__dirname, "endpoints", "client_api_endpoints")));
-app.use("/device_api", require(path.join(__dirname, 'endpoints', 'device_api_endpoints')));
+app.use("/api", require(path.join(__dirname, "src", "api_endpoints", "client_api_endpoints")));
+app.use("/device_api", require(path.join(__dirname, "src", 'api_endpoints', 'device_api_endpoints')));
 
 app.listen(port, () => {
   console.log(`listening: ${port}`);
 });
+
+export default app;
 
 // app.get("/", async (req, res, next) => {
 //   try {
