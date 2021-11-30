@@ -6,7 +6,6 @@ const devWalletAddress = process.env.DEVEL_WALLET_ADDRESS;
 const openSeaClient = new OpenSeaClient();
 
 router.get("/assets", async (req, res, next) => {
-    // console.log("req query: ", req.query)
     const { offset, wallet_address } = req.query;
     const w_a = devWalletAddress || wallet_address;
     try {

@@ -1,3 +1,4 @@
+import DeviceConfigurationModel from "./device_configuration_model_schema";
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
@@ -8,10 +9,7 @@ const UserModel = mongoose.model(
         type: String,
         default: null,
       },
-      device_configurations: {
-        type: Array,
-        default: null,
-      }
+      device_configurations: Array(DeviceConfigurationModel)
     }, { timestamps: true })
 );
 
