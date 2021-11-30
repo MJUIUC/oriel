@@ -12,10 +12,13 @@ const DeviceConfigurationModel = mongoose.model(
             screen_height: Number,
             screen_width: Number,
             aspect_ratio: Number,
-
+            static_image_format: {
+                type: String,
+                default: "jpeg"
+            }
         },
         displayable_assets: {
-            lastest_device_sync_timestamp: Number,
+            latest_asset_modify_timestamp: Number,
             asset_list: Array(DigitalAssetModel),
         },
     }, { timestamps: true })

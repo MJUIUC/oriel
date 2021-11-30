@@ -5,6 +5,19 @@ const router = Router();
 const devWalletAddress = process.env.DEVEL_WALLET_ADDRESS;
 const openSeaClient = new OpenSeaClient();
 
+// TODO: Add middleware for error handling
+
+/**
+ * /assets
+ * -----------
+ * @method {GET}
+ * 
+ * @query_param {String} wallet_address: Address of asset owning wallet.
+ * @query_param {String} offset: Section of osm assets to display. Only 20 returned at a time from api
+ * 
+ * This endpoint simply retrieves assets from OSM given a
+ * wallet address and offset amount.
+*/
 router.get("/assets", async (req, res, next) => {
     const { offset, wallet_address } = req.query;
     const w_a = devWalletAddress || wallet_address;
@@ -18,18 +31,21 @@ router.get("/assets", async (req, res, next) => {
 });
 
 /**
- * Add New Wallet
- * ---------------------
- * This will start a new wallet object. It
- * should be called when a new wallet address it entered
- * by a client. The endpoint will create a new Wallet
- * Object in a datastore (likely mongo) which will house a users
- * NFT asset collection as well as a list of devices to display
- * those assets on.
+ * /initialize_user
+ * ----------------
+ * @method {POST}
+ * 
+ * This endpoint will be called to initialize a new user from the
+ * web client. Should call a service method to perform some checks,
+ * with a returned Promise to try withint the async callback.
 */
-router.post("/a", async (req, res, next) => {
-    // console.log(openSeaClient.getCollections(devWalletAddress));
-    next();
+router.post("/initialize_user", async (req, res, next) => {
+    try {
+        // TODO: Make call to UserService class to initialize a new user
+    } catch (e) {
+        console.log(e);
+        next();
+    }
 });
 
 module.exports = router;
