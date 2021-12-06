@@ -6,14 +6,12 @@ const Schema = mongoose.Schema;
  * -------------------
  * A model for digital assets tied to a token. Assets
  * are collectible from multiple sources, or marketplaces.
- * 
- * note osm -> Open Sea Marketplace
 */
 const DigitalAssetModel = mongoose.model(
   "DigitalAssetModel",
   new Schema({
     name: String,
-    osm_asset_id: Number,
+    marketplace_asset_id: Number, /* They'll all be OpenSea to begin with */
     asset_contract_address: String,
     asset_token_id: String,
     asset_image_urls: {

@@ -1,4 +1,3 @@
-import DigitalAssetModel from "./digital_asset_model_schema"
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
@@ -19,7 +18,7 @@ const DeviceConfigurationModel = mongoose.model(
         },
         displayable_assets: {
             latest_asset_modify_timestamp: Number,
-            asset_list: Array(DigitalAssetModel),
+            asset_list: Array(),
         },
     }, { timestamps: true })
 );

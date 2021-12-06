@@ -14,13 +14,13 @@ const mongo_db_name: any =  process.env.MONGO_DB_NAME;
 
 const port = 8080;
 const mongo_uri: string = `mongodb+srv://${mongo_user}:${mongo_password}@orieldev1.fwlte.mongodb.net/${mongo_db_name}?retryWrites=true&w=majority`;
-// mongoose.connect(mongo_uri, error => {
-//   if (error) {
-//     console.log(error)
-//   } else {
-//     console.log(`database connection established at: ${mongoose.connection.host} on port ${mongoose.connection.port}`)
-//   }
-// });
+mongoose.connect(mongo_uri, error => {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log(`database connection established at: ${mongoose.connection.host} on port ${mongoose.connection.port}`);
+  }
+});
 
 app.use(
   morgan("combined", {
