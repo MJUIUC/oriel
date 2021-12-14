@@ -1,5 +1,3 @@
-import DeviceConfigurationModel from "./device_configuration_model_schema";
-import DigitalAssetModel from "./digital_asset_model_schema";
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
@@ -13,10 +11,19 @@ const Schema = mongoose.Schema;
 const UserModel = mongoose.model(
     "UserModel",
     new Schema({
-      email_address: String,
-      wallet_address: String, /* This may become an array at some point */
-      owned_device_configurations: Array(),
-      owned_digital_assets: Array()
+      email_address: {
+        type: String,
+        match: /^\S+@\S+\.\S+$/,
+        unique: true,
+        trim: true,
+        lowercase: true,
+      },
+      wallet_address: {
+        type: String /* This may become an array at some point */
+      }, 
+      owned_device_configurations: {
+        type: Array()
+      }
     }, { timestamps: true })
 );
 

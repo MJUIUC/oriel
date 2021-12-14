@@ -1,6 +1,14 @@
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
+export interface DisplayHardwareDetailsInterface {
+  storage_space_mbs: Number,
+  screen_height: Number,
+  screen_width: Number,
+  aspect_ratio: Number,
+  static_image_format?: String
+}
+
 const DeviceConfigurationModel = mongoose.model(
     "DeviceConfigurationModel",
     new Schema({
