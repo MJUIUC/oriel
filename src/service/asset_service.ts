@@ -1,7 +1,6 @@
-import DigitalAssetModel from "../db_models/digital_asset_model_schema";
+import DigitalAssetModel, { DigitalAssetModelInterface, DigitalAssetModelReferenceInterface } from "../db_models/digital_asset_model_schema";
 import {
   OpenSeaDigitalAssetResponse,
-  OpenSeaDigitalAsset,
 } from "../rpc_clients/open_sea_client";
 
 export default class AssetService {
@@ -17,7 +16,7 @@ export default class AssetService {
   createDigitalAssetsFromOpenSeaResponse(
     osAssetResponse?: OpenSeaDigitalAssetResponse
   ) {
-    return osAssetResponse.assets.map((asset: OpenSeaDigitalAsset, index) => {
+    return osAssetResponse.assets.map((asset: DigitalAssetModelInterface, index) => {
       return this.createDigitalAsset(asset);
     });
   }
@@ -27,9 +26,9 @@ export default class AssetService {
    * --------------------
    * Writes a new marketplace Digital Asset to the DB
    *
-   * @param {OpenSeaDigitalAsset} asset: An asset which we want to save to Oriel
+   * @param {DigitalAssetModelInterface} asset: An asset which we want to save to Oriel
    */
-  async createDigitalAsset(asset: OpenSeaDigitalAsset) {
+  async createDigitalAsset(asset: DigitalAssetModelInterface) {
     const { wallet_address } = asset.asset_owner;
     const {
       name,
@@ -41,11 +40,11 @@ export default class AssetService {
       _collection,
     } = asset;
     try {
-      const foundAsset: OpenSeaDigitalAsset =
-        await this.findSingleAssetFromOriel(
-          wallet_address,
+      const foundAsset: DigitalAssetModelInterface =
+        await DigitalAssetModel.findOne({
+          "asset_owner.wallet_address": wallet_address,
           marketplace_asset_id
-        );
+        });
       if (foundAsset) {
         return foundAsset;
       } else {
@@ -79,6 +78,24 @@ export default class AssetService {
     return this.findSingleAssetFromOriel(wallet_address, marketpalce_asset_id);
   }
 
+  /**
+   * Create Digital Asset Reference
+   * ------------------------------
+   * Creates an object which contains the base amount
+   * of information to retrieve a digital asset either
+   * from a marketplace, or from Oriel DB.
+  */
+  createDigitalAssetReference(
+    digital_asset: DigitalAssetModelInterface
+  ): DigitalAssetModelReferenceInterface {
+    const ref_asset:DigitalAssetModelReferenceInterface = {
+      name: digital_asset.name,
+      asset_contract_address: digital_asset.asset_contract_address,
+      asset_token_id: digital_asset.asset_token_id,
+    }
+    return ref_asset; 
+  }
+
   /* PRIVATE METHODS */
 
   private async findSingleAssetFromOriel(
@@ -94,10 +111,23 @@ export default class AssetService {
       if (d_a) {
         return d_a;
       } else {
-        return null;
+        throw new AssetServiceException(`Failed to find asset with marketplace_asset_id: ${marketpalce_asset_id}`);
       }
     } catch (e) {
       console.debug(e);
     }
+  }
+}
+
+export class AssetServiceException extends Error {
+  constructor(message: string, ...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AssetServiceException)
+    }
+
+    this.name = "AssetServiceException"
+    this.message = message;
   }
 }

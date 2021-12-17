@@ -1,16 +1,16 @@
 import * as mongoose from "mongoose";
+import { DeviceConfigurationModelInterface } from "./device_configuration_model_schema";
 const Schema = mongoose.Schema;
 
-// interface UserModel {
-//   email_address: string,
-//   wallet_address: string, /* This may become an array at some point */
-//   owned_device_configurations: array<typeof DeviceConfigurationModel>,
-//   owned_digital_assets: array<typeof DigitalAssetModel>
-// }
+export interface UserModelInterface {
+  email_address: string,
+  wallet_address: string, /* This may become an array at some point */
+  owned_device_configurations: [DeviceConfigurationModelInterface],
+}
 
-const UserModel = mongoose.model(
+const UserModel = mongoose.model<UserModelInterface>(
     "UserModel",
-    new Schema({
+    new Schema<UserModelInterface>({
       email_address: {
         type: String,
         match: /^\S+@\S+\.\S+$/,
@@ -23,7 +23,7 @@ const UserModel = mongoose.model(
       }, 
       owned_device_configurations: {
         type: Array()
-      }
+      },
     }, { timestamps: true })
 );
 

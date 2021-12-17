@@ -1,33 +1,10 @@
 import axios from "axios";
-
-export interface OpenSeaDigitalAsset {
-  name: string,
-  oriel_owner_wallet_address?: string,
-  marketplace_asset_id: string, /* They'll all be OpenSea to begin with */
-  asset_contract_address: string,
-  asset_token_id: string,
-  asset_image_urls: {
-    animation_url?: string,
-    animation_original_url?: string,
-    image_url?: string,
-    image_preview_url?: string,
-    image_thumbnail_url?: string,
-    image_original_url?: string,
-  },
-  asset_owner: {
-    wallet_address: string,
-    osm_username: string
-  },
-  _collection: {
-    name: string,
-    slug: string,
-  },
-}
+import { DigitalAssetModelInterface } from "../db_models/digital_asset_model_schema";
 
 export interface OpenSeaDigitalAssetResponse {
   wallet_address: string,
   asset_count: number,
-  assets?: [OpenSeaDigitalAsset]
+  assets?: [DigitalAssetModelInterface]
 }
 
 /**
@@ -62,7 +39,7 @@ export default class OpenSeaClient {
         }
         // Trim asset from response
         function transposeAsset(asset: any) {
-          const trans_asset: OpenSeaDigitalAsset = {
+          const trans_asset: DigitalAssetModelInterface = {
             name: asset.name,
             marketplace_asset_id: asset.id,
             asset_contract_address: asset.asset_contract.address,

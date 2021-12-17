@@ -4,8 +4,10 @@ import * as dotenv from "dotenv";
 import UserService from "../src/service/user_service";
 import DeviceService from "../src/service/device_service";
 import AssetService from "../src/service/asset_service";
-import OpenSeaClient, { OpenSeaDigitalAsset, OpenSeaDigitalAssetResponse } from "../src/rpc_clients/open_sea_client";
-import { DisplayHardwareDetailsInterface } from "../src/db_models/device_configuration_model_schema";
+import OpenSeaClient, { OpenSeaDigitalAssetResponse } from "../src/rpc_clients/open_sea_client";
+import { DeviceConfigurationModelInterface, DisplayHardwareDetailsInterface } from "../src/db_models/device_configuration_model_schema";
+import { UserModelInterface } from "../src/db_models/user_model_schema";
+import { DigitalAssetModelInterface, DigitalAssetModelReferenceInterface } from "../src/db_models/digital_asset_model_schema";
 
 dotenv.config({path: "../.env"});
 
@@ -43,12 +45,20 @@ class InitializeDevDB {
   async begin(){
     console.log("Beginning Dev DB setup");
     const test_assets = await this.createTestAssets();
-    const test_device = await this.createTestDevice();
-    const test_user = await this.createTestUser();
+    const test_device: DeviceConfigurationModelInterface = await this.createTestDevice();
+    const test_user: UserModelInterface = await this.createTestUser();
 
     // TODO: 1) Add device to a user.
+    await this.userService.addToUsersOwnedDeviceConfigurations(test_user.wallet_address, test_device); 
     // TODO: 2) Add assets to a device.
-    // TODO: 3) Write function to return oriel_config.json as a result
+    await test_assets.forEach(async (test_asset: DigitalAssetModelInterface) => {
+      // Must Create References first
+      const asset_reference: DigitalAssetModelReferenceInterface = this.assetService.createDigitalAssetReference(test_asset);
+      // TODO: Call device service to add a new asset to the device
+      this.deviceService.addAssetToDeviceByReference(test_device, asset_reference);
+    })
+    test_device.save();
+    console.log("Completed");
   }
   
   async createTestUser() {
