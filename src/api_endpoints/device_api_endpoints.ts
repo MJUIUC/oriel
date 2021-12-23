@@ -1,5 +1,8 @@
+import OrielMainService from "../service/oriel_main_service";
 import { Router } from "express";
 const router = Router();
+
+const orielMainService: OrielMainService = new OrielMainService();
 
 /**
  * This middleware exists to handle requests
@@ -9,17 +12,24 @@ const router = Router();
 */
 
 /**
- * Wallet Config Sync
+ * Oriel Config JSON
  * ------------------
- * This endpoint is called to serve a wallet configuration
- * json string based on the current state of the users assets
- * set to be on display for their device.
+ * This endpoint serves the device display
+ * configuration to the caller.
+ * 
+ * TODO: Call main service class to render a device configuration json
  * 
  * API params
- * @param {wallet_address}: Wallet Address associated with OpenSea marketplace
+ * @query_param {wallet_address}: Wallet Address associated with OpenSea marketplace
+ * @query_param {}
 */
-router.get("/wallet_sync/:wallet_address", async (req, res, next) => {
+router.get("/oriel_config.json", async (req, res, next) => {
+  try {
+    const { oriel_server_version } = req;
+    const { wallet_address, device_name } = req.query;
     
+    res.status(200).send(await orielMainService.renderOrielDeviceCongfigurationJson(device_name, oriel_server_version, wallet_address));
+  } catch(e) {console.debug(e)}
 });
 
 /**
@@ -35,7 +45,7 @@ router.get("/wallet_sync/:wallet_address", async (req, res, next) => {
  * @param {device_id}: Device id from Oriel device config model
  * @param {asset_id}: OpenSea Asset id
 */
-router.get("/single_asset/:wallet_address/:asset_id", async (req, res, next) => {
+router.get("/asset/:wallet_address/:asset_id", async (req, res, next) => {
 
 });
 

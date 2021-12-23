@@ -16,7 +16,16 @@ const mongo_password: any = process.env.MONGO_DB_PASSWORD;
 const mongo_db_name: any =  process.env.MONGO_DB_NAME;
 const dev_wallet_address = process.env.DEVEL_WALLET_ADDRESS;
 
-// TODO: Finish this job so we can generate a device_sync.json
+/**
+ * Inititalize Dev DB
+ * ------------------
+ * Script to initialize dummy data in a mongo dev environment.
+ * Useful for adding quick base data. The class interface allows it
+ * to be extended as a base and use the setup scripts/methods for other
+ * jobs as well.
+ * 
+ * Note* Must run in /jobs directory fo the env variables to show ups
+ */
 class InitializeDevDB {
   userService: UserService = new UserService();
   deviceService: DeviceService = new DeviceService();

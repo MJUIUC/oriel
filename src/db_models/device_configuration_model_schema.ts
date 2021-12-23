@@ -16,7 +16,7 @@ export interface DeviceConfigurationModelInterface {
   display_hardware_details: DisplayHardwareDetailsInterface,
   displayable_assets: {
     latest_asset_modify_timestamp: number,
-    asset_references: [DigitalAssetModelReferenceInterface],
+    asset_list: [DigitalAssetModelReferenceInterface],
   },
   save: any
 }

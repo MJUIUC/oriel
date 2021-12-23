@@ -60,12 +60,19 @@ export default class UserService {
     }
   }
 
+  async getOrielUser(wallet_address: string, email?: string){
+    try {
+      return await this.findOneExistingUser(wallet_address, email);
+    } catch(e){console.debug(e)}
+  }
+
   /* PRIVATE METHODS */
 
   private async findOneExistingUser(wallet_address: string, email?: string) {
     try {
       const u: any = await UserModel.findOne({
         wallet_address,
+        email_address: email,
       }).exec();
       if (u) {
         return u;

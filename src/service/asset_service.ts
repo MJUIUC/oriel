@@ -79,6 +79,18 @@ export default class AssetService {
   }
 
   /**
+   * Hydrate Digital Asset References
+   * --------------------------------
+   * Hydrates a list of oriel digital asset references
+  */
+
+  async hydrateDigitalAssetReferences(asset_references: Array<DigitalAssetModelReferenceInterface>){
+    return await asset_references.map(async (asset_reference: DigitalAssetModelReferenceInterface) => {
+      return await this.findSingleAssetFromOriel(asset_reference.asset_contract_address, asset_reference.asset_token_id)
+    });
+  }
+
+  /**
    * Create Digital Asset Reference
    * ------------------------------
    * Creates an object which contains the base amount
@@ -99,19 +111,19 @@ export default class AssetService {
   /* PRIVATE METHODS */
 
   private async findSingleAssetFromOriel(
-    wallet_address: string,
-    marketpalce_asset_id: string
+    asset_contract_address: string,
+    asset_token_id: string,
   ) {
     try {
       const d_a = await DigitalAssetModel.findOne({
-        "asset_owner.wallet_address": wallet_address,
-        marketplace_asset_id: marketpalce_asset_id,
+        asset_contract_address,
+        asset_token_id,
       }).exec();
 
       if (d_a) {
         return d_a;
       } else {
-        throw new AssetServiceException(`Failed to find asset with marketplace_asset_id: ${marketpalce_asset_id}`);
+        throw new AssetServiceException(`Failed to find asset with asset_contract_address: ${asset_contract_address} and asset_token_id: ${asset_token_id}`);
       }
     } catch (e) {
       console.debug(e);

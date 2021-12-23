@@ -13,7 +13,7 @@ import AssetService from "./asset_service";
  * with device configurations.
  */
 export default class DeviceService {
-  assetService: AssetService = new AssetService();
+  private assetService: AssetService = new AssetService();
   /**
    * Create New Device
    * -----------------

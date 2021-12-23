@@ -1,6 +1,7 @@
 import OpenSeaClient from "../rpc_clients/open_sea_client";
 import UserService from "../service/user_service";
 import { Router } from "express";
+import { UserModelInterface } from "../db_models/user_model_schema";
 const router = Router();
 
 const devWalletAddress = process.env.DEVEL_WALLET_ADDRESS;
@@ -14,7 +15,7 @@ const userService: UserService = new UserService();
  * these endpoints will still involve "device" in their names.
 */
 
-// TODO: Add middleware for error handling
+// TODO: Add middleware for error handling errors
 
 /**
  * /assets
@@ -54,12 +55,15 @@ router.get("/assets", async (req, res, next) => {
  * }
 */
 router.post("/initialize_user", async (req, res, next) => {
-    const { wallet_address, email } = req.body;
-    try {
-        const newUser:Promise<any> = await userService.createNewUser(wallet_address, email);
-        if (newUser) {
-          res.status(200).send(newUser);
-        }
+  try {
+      const { wallet_address, email } = req.body;
+      const newUser:UserModelInterface = await userService.createNewUser(wallet_address, email);
+      if (newUser) {
+        res.status(200).send(newUser);
+      } else {
+        res.status(500).send("Internal Server error on creating user path")
+      }
+      
     } catch (e) {
         console.log(e);
         next();
