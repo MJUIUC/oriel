@@ -26,12 +26,10 @@ export default class ImageConverter {
             width: device_config.display_hardware_details.screen_width,
             height: device_config.display_hardware_details.screen_height,
             fit: "contain",
-          })
-          .jpeg({
+          }).toFormat(device_config.display_hardware_details.static_image_format, {
             quality: 100,
             chromaSubsampling: "4:4:4",
-          })
-          .toBuffer();
+          }).toBuffer();
           if (LIVE_IMAGE) {
             return LIVE_IMAGE;
           } else {

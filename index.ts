@@ -1,10 +1,9 @@
 import * as express from "express";
-import * as morgan from "morgan";
 import * as dotenv from "dotenv";
-import * as fs from "fs";
 import * as path from "path";
 import * as mongoose from "mongoose";
 import * as bodyParser from "body-parser";
+import ServiceLogger from "./src/utilities/service_logger";
 
 const app = express();
 dotenv.config();
@@ -24,18 +23,17 @@ mongoose.connect(mongo_uri, error => {
     console.log(`database connection established at: ${mongoose.connection.host} on port ${mongoose.connection.port}`);
   }
 });
+const service_logger = new ServiceLogger(path.join(__dirname, "logs"));
 
-app.use(
-  morgan("combined", {
-    stream: fs.createWriteStream("./access.log", { flags: "a" }),
-  })
-);
-
+// add body parser
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
-
+// add access logs
+app.use((req, res, next) => {service_logger._logServiceAccess(req, res, next)});
+// add objects to request object
 app.use((req, res, next) => {
   req.oriel_server_version = server_version;
+  req.service_logger = service_logger;
   next();
 })
 app.use("/client", require(path.join(__dirname, "src", "api_endpoints", "client_api_endpoints")));

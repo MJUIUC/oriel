@@ -15,9 +15,9 @@ const orielMainService: OrielMainService = new OrielMainService();
  * Oriel Config JSON
  * ------------------
  * This endpoint serves the device display
- * configuration to the caller.
- *
- * TODO: Call main service class to render a device configuration json
+ * configuration to the caller. Display configuration contains
+ * a list of user added assets, and user or pre-defined hardware
+ * characteristics.
  *
  * API params
  * @query_param {wallet_address}: Wallet Address associated with OpenSea marketplace
@@ -27,7 +27,7 @@ router.get("/oriel_config.json", async (req, res, next) => {
   try {
     const { oriel_server_version } = req;
     const { wallet_address, device_id } = req.query;
-    
+
     res
       .status(200)
       .send(
@@ -37,6 +37,7 @@ router.get("/oriel_config.json", async (req, res, next) => {
           wallet_address
         )
       );
+    req.service_logger.info(`Successfully served oriel_config.json to owner: ${wallet_address}, and device: ${device_id}`);
   } catch (e) {
     console.debug(e);
     res.status(500).send(e);
@@ -56,7 +57,6 @@ router.get("/oriel_config.json", async (req, res, next) => {
  */
 router.get("/asset", async (req, res, next) => {
   try {
-    //TODO: Update model to use mongo device id instead of entire object
     const {
       wallet_address,
       device_id,
@@ -74,8 +74,8 @@ router.get("/asset", async (req, res, next) => {
       "Content-Length": live_asset.content_length,
     });
     res.end(live_asset.device_spec_live_asset_buffer);
+    req.service_logger.info(`Image served to device_id: ${device_id}, belonging to wallet_address: ${wallet_address}`);
   } catch (e) {
-    console.debug(e);
     next(e);
   }
 });

@@ -10,7 +10,8 @@ import DeviceService from "./device_service";
 import AssetService from "./asset_service";
 import ImageConverter from "../utilities/image_converter";
 import LiveAssetDownloader from "../rpc_clients/live_asset_downloader";
-
+import * as ProcessTimer from "process-timer";
+import ServiceLogger from "../utilities/service_logger";
 /**
  * Oriel Main Service
  * ------------------
@@ -23,6 +24,7 @@ export default class OrielMainService {
   private assetService: AssetService = new AssetService();
   private imageConverter: ImageConverter = new ImageConverter();
   private liveAssetDownloader: LiveAssetDownloader = new LiveAssetDownloader();
+  private serviceLogger: ServiceLogger = new ServiceLogger("../../logs");
 
   /**
    * Render Oriel Device Config Json
@@ -101,7 +103,8 @@ export default class OrielMainService {
           wallet_address,
           asset_contract_address,
           asset_token_id
-        );
+          );
+      const liveAssetCreationTimer = new ProcessTimer();
       const live_asset_buffer: Buffer =
         await this.liveAssetDownloader.downloadImageToBuffer(
           digital_asset.asset_image_urls.image_original_url
@@ -111,13 +114,16 @@ export default class OrielMainService {
           device_config,
           live_asset_buffer
         );
+      console.debug(`Image Conversion Elapsed Time: ${liveAssetCreationTimer.ms} s`)
       return {
         content_type: device_config.display_hardware_details.static_image_format,
         content_length: device_spec_live_asset_buffer.length,
         device_spec_live_asset_buffer,
       };
     } catch (e) {
-      return Promise.reject(e);
+      console.log(e);
+      this.serviceLogger.error(e.message, e);
+      return Promise.reject(new OrielMainServiceException(e.message));
     }
   }
 }
