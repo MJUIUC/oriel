@@ -1,9 +1,12 @@
 import DigitalAssetModel, { DigitalAssetModelInterface, DigitalAssetModelReferenceInterface } from "../db_models/digital_asset_model_schema";
+import { UserModelInterface } from "../db_models/user_model_schema";
 import {
   OpenSeaDigitalAssetResponse,
 } from "../rpc_clients/open_sea_client";
+import UserService from "./user_service";
 
 export default class AssetService {
+  private userService: UserService = new UserService();
   /**
    * Create Digital Asset From OpenSea Response
    * --------------------
@@ -59,31 +62,37 @@ export default class AssetService {
         });
       }
     } catch (e) {
-      console.debug(e);
+      return Promise.reject(new AssetServiceException(e.message));
     }
   }
 
   /**
-   * Get Digital Asset
-   * -----------------
-   * Get a Digital Asset Model Object from app DB.
-   * Does not make a call to an online marketplace.
-   *
+   * Verify And Get Digital Asset
+   * ----------------------------
+   * 
    * @param {string} wallet_address
-   * @param {string} marketpalce_asset_id
-   *
-   * @return DigitalAssetModelObject if found else null
-   */
-  async getDigitalAsset(wallet_address: string, marketpalce_asset_id: string) {
-    return this.findSingleAssetFromOriel(wallet_address, marketpalce_asset_id);
+   * @param {string} asset_contract_address
+   * @param {string} asset_token_id
+  */
+ async verifyAndGetDigitalAsset(wallet_address: string, asset_contract_address: string, asset_token_id: string) {
+  try {
+    const digital_asset:DigitalAssetModelInterface = await this.findSingleAssetFromOriel(asset_contract_address, asset_token_id);
+    
+    if (wallet_address === digital_asset.asset_owner.wallet_address) {
+      return digital_asset;
+    } else {
+      throw new Error(`Asset owner id didn't match wallet address: ${wallet_address}`);
+    }
+  } catch(e) {
+    return Promise.reject(new AssetServiceException(e.message));
   }
+ }
 
   /**
    * Hydrate Digital Asset References
    * --------------------------------
    * Hydrates a list of oriel digital asset references
   */
-
   async hydrateDigitalAssetReferences(asset_references: Array<DigitalAssetModelReferenceInterface>){
     return await asset_references.map(async (asset_reference: DigitalAssetModelReferenceInterface) => {
       return await this.findSingleAssetFromOriel(asset_reference.asset_contract_address, asset_reference.asset_token_id)
@@ -101,32 +110,33 @@ export default class AssetService {
     digital_asset: DigitalAssetModelInterface
   ): DigitalAssetModelReferenceInterface {
     const ref_asset:DigitalAssetModelReferenceInterface = {
-      name: digital_asset.name,
       asset_contract_address: digital_asset.asset_contract_address,
       asset_token_id: digital_asset.asset_token_id,
     }
     return ref_asset; 
   }
 
-  /* PRIVATE METHODS */
-
+  /* PRIVATE METHODS
+  * ----------------
+  * They return normal errors when they break
+  */
   private async findSingleAssetFromOriel(
     asset_contract_address: string,
     asset_token_id: string,
   ) {
     try {
       const d_a = await DigitalAssetModel.findOne({
-        asset_contract_address,
-        asset_token_id,
+        asset_contract_address: String(asset_contract_address),
+        asset_token_id: String(asset_token_id),
       }).exec();
 
       if (d_a) {
         return d_a;
       } else {
-        throw new AssetServiceException(`Failed to find asset with asset_contract_address: ${asset_contract_address} and asset_token_id: ${asset_token_id}`);
+        throw new Error(`Failed to find asset with asset_contract_address: ${asset_contract_address} and asset_token_id: ${asset_token_id}`);
       }
     } catch (e) {
-      console.debug(e);
+      return Promise.reject(new AssetServiceException(e.message));
     }
   }
 }

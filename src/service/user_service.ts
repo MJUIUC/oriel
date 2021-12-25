@@ -35,7 +35,7 @@ export default class UserService {
         });
       }
     } catch (e) {
-      console.debug(e);
+      return Promise.reject(new UserServiceException(e.message));
     }
   }
 
@@ -50,20 +50,21 @@ export default class UserService {
     device_config: DeviceConfigurationModelInterface,
   ) {
     try {
-      const u = await this.findOneExistingUser(wallet_address);
-      if (this.checkIfDeviceNameUnique(u, device_config)) {
-        u.owned_device_configurations.push(device_config);
+      const u: UserModelInterface = await this.findOneExistingUser(wallet_address);
+      const found_device_config_id = u.owned_device_configurations.includes(device_config._id, 0);
+      if (!found_device_config_id) { // if the device config doesn't exist
+        u.owned_device_configurations.push(device_config._id);
         u.save();
       }
     } catch (e) {
-      console.debug(e);
+      return new UserServiceException(e.message);
     }
   }
 
   async getOrielUser(wallet_address: string, email?: string){
     try {
       return await this.findOneExistingUser(wallet_address, email);
-    } catch(e){console.debug(e)}
+    } catch(e){return new UserServiceException(e.message);}
   }
 
   /* PRIVATE METHODS */
@@ -82,20 +83,8 @@ export default class UserService {
         );
       }
     } catch (e) {
-      console.debug(e);
+      return new UserServiceException(e.message);
     }
-  }
-
-  private checkIfDeviceNameUnique(
-    user: UserModelInterface,
-    device_config: DeviceConfigurationModelInterface
-  ) {
-    return user.owned_device_configurations.every((device: DeviceConfigurationModelInterface) => {
-      if (device.device_name != device_config.device_name) {
-        return true;
-      }
-      return false;
-    })
   }
 }
 

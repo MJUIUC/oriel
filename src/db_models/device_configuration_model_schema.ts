@@ -19,6 +19,7 @@ export interface DeviceConfigurationModelInterface {
     asset_list: [DigitalAssetModelReferenceInterface],
   },
   save: any
+  _id: any
 }
 
 const DeviceConfigurationModel = mongoose.model<DeviceConfigurationModelInterface>(

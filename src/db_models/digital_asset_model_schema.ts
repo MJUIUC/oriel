@@ -2,7 +2,6 @@ import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 export interface DigitalAssetModelReferenceInterface {
-  name: string,
   asset_contract_address: string,
   asset_token_id: string,
 }
@@ -28,6 +27,8 @@ export interface DigitalAssetModelInterface {
     name: string,
     slug: string,
   },
+  save: any,
+  _id: any,
 }
 
 /**

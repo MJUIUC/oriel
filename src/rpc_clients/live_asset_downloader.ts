@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default class RawImageDownloader {
+export default class LiveAssetDownloader {
 
   /**
    * Download Image To Buffer
@@ -14,28 +14,28 @@ export default class RawImageDownloader {
   async downloadImageToBuffer(image_url: string){
     try {
       const result = await axios.get(image_url, {responseType: 'arraybuffer'});
-      const image_string = result.data;
-      if (typeof image_string === "string") {
-        const raw_image_buf = Buffer.from(image_string, "base64");
-        return raw_image_buf;
+      const image_array_buffer: any = result.data;
+      
+      if (image_array_buffer.length !== 0) {
+        return image_array_buffer;
       } else {
-        throw new RawImageDownloaderException("image_string did not pass type check");
+        throw new Error("image_array_buffer length empty");
       }
     } catch (e) {
-      console.debug(e);
+      return Promise.reject(new LiveAssetDownloaderException(e.message));
     }
   }
 }
 
-export class RawImageDownloaderException extends Error {
+export class LiveAssetDownloaderException extends Error {
   constructor(message: string, ...params) {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, RawImageDownloaderException);
+      Error.captureStackTrace(this, LiveAssetDownloaderException);
     }
 
-    this.name = "RawImageDownloaderException";
+    this.name = "LiveAssetDownloaderException";
     this.message = message;
   }
 }

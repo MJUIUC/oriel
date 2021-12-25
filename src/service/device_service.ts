@@ -1,4 +1,5 @@
 import DeviceConfigurationModel, {
+  DeviceConfigurationModelInterface,
   DisplayHardwareDetailsInterface,
 } from "../db_models/device_configuration_model_schema";
 import {
@@ -14,6 +15,25 @@ import AssetService from "./asset_service";
  */
 export default class DeviceService {
   private assetService: AssetService = new AssetService();
+
+  /**
+   * Get Device By Id
+   * ----------------
+   * Returns a device configuration given the unique _id
+  */
+ async getDeviceById(device_id: string){
+   try {
+    const device: DeviceConfigurationModelInterface = await DeviceConfigurationModel.findById(device_id).exec();
+    if (device) {
+      return device;
+    } else {
+      throw new DeviceServiceException(`There was no device found for device_id: ${device_id}`);
+    }
+   } catch (e) {
+     console.log(e);
+   }
+ }
+
   /**
    * Create New Device
    * -----------------

@@ -5,7 +5,9 @@ const Schema = mongoose.Schema;
 export interface UserModelInterface {
   email_address: string,
   wallet_address: string, /* This may become an array at some point */
-  owned_device_configurations: [DeviceConfigurationModelInterface],
+  owned_device_configurations: Array<string>,
+  save: any,
+  _id: any,
 }
 
 const UserModel = mongoose.model<UserModelInterface>(

@@ -46,7 +46,13 @@ class InitializeDevDB {
         console.log(error);
       } else {
         console.log(`database connection established at: ${mongoose.connection.host} on port ${mongoose.connection.port}`);
-        this.begin();
+        this.begin().then(t_u => {
+          if (t_u) {
+            console.log("Script completed");
+            console.log("https://cloud.mongodb.com/v2#/org/61a43a37c05ee57eab2dff54/projects");
+            process.exit(1);
+          }
+        })
       }
     });
   }
@@ -66,8 +72,7 @@ class InitializeDevDB {
       // TODO: Call device service to add a new asset to the device
       this.deviceService.addAssetToDeviceByReference(test_device, asset_reference);
     })
-    test_device.save();
-    console.log("Completed");
+    return await test_device.save();
   }
   
   async createTestUser() {

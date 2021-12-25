@@ -59,7 +59,9 @@ export default class OpenSeaClient {
             _collection: {
               name: asset.collection.name,
               slug: asset.collection.slug,
-            }
+            },
+            save: null,
+            _id: null,
           }
           return trans_asset;
         }
