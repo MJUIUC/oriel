@@ -4,11 +4,14 @@ const router = Router();
 
 const orielMainService: OrielMainService = new OrielMainService();
 
-/**
- * This middleware exists to handle requests
- * replated to specific devices. Applications
- * meant to display digital assets via Oriel
- * will call these endpoints.
+/***********************************************
+ * This middleware exists to organize all requests made
+ * by devices on the Oriel network. The device communicates
+ * in JSON so all responses will be sent as stringified json, asside from
+ * the live asset responses, which will be raw base64 string data.
+ * 
+ * TODO: Reject request where query params aren't present. Maybe should add a filter
+ * for some which should be sent with every request.
  */
 
 /**
@@ -45,7 +48,7 @@ router.get("/oriel_config.json", async (req, res, next) => {
 });
 
 /**
- * Get Single Asset
+ * Live Asset Json
  * ----------------
  * This endpoint is called to return a live asset to a device.
  *
@@ -55,7 +58,7 @@ router.get("/oriel_config.json", async (req, res, next) => {
  * @query_param {string} asset_contract_address
  * @query_param {string} asset_token_id
  */
-router.get("/asset", async (req, res, next) => {
+router.get("/live_asset.json", async (req, res, next) => {
   try {
     const {
       wallet_address,
@@ -79,5 +82,34 @@ router.get("/asset", async (req, res, next) => {
     next(e);
   }
 });
+
+/**
+ * Sync Ready Json
+ * ---------------
+ * This is endpoint is called by a device to determine if
+ * that device is ready to be sync'd for any reason.
+ * 
+ * API params
+ * @query_param {string} wallet_address: Wallet Address of the device owner
+ * @query_param {string} device_id: ID onboard the device
+ * 
+ * Always returns:
+ * {
+ *  device_sync_ready: true || false,
+ * }
+*/
+router.get("/sync_ready.json", async (req, res, next) => {
+  try {
+    const {
+      wallet_address,
+      device_id,
+    } = req.query;
+    console.log("Requesting wallet address: ", wallet_address);
+    console.log("Requesting device_id: ", device_id);
+    res.status(200).send({device_sync_ready: true});
+  } catch (e) {
+    next(e);
+  }
+})
 
 module.exports = router;
